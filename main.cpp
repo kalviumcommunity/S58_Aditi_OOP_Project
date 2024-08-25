@@ -84,7 +84,7 @@ public:
       break;
     }
 
-    pet.passTime(); // Simulate time passing after each action
+    pet.passTime(); 
   }
 
   void playGame() {
