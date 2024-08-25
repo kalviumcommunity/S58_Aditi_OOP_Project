@@ -14,7 +14,7 @@ class Pet{
 
     void feed(){
         hunger = max(0, hunger -20);
-        cout << name << " has been fed!" endl;
+        cout << name << " has been fed!" << endl;
     }
 
     void play(){
