@@ -74,23 +74,22 @@ class Game{
   void takeTurn(){
     int choice;
     cout << "\nWhat would you like to do?\n1. Feed\n2. Play\n3. Rest\nEnter" 
-    "your choice: ";
+    " your choice: ";
     cin >> choice;
 
     switch(choice){
-      case 1: this->pet.feed();
-      break;
-      case 2: this->pet.play();
-      break;
-      case 3: this->pet.rest();
-      break;
-      default: cout << "Invalid choice!" << endl;
-      break;
+        case 1: this->pet.feed();
+        break;
+        case 2: this->pet.play();
+        break;
+        case 3: this->pet.rest();
+        break;
+        default: cout << "Invalid choice!" << endl;
+        break;
     }
 
-    this->pet.passTime();
+    this->pet.passTime();  
 }
-
 
   void playGame(){
     this-> startGame();
