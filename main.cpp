@@ -89,7 +89,8 @@ class Game{
     }
 
     this->pet.passTime();
-  }
+}
+
 
   void playGame(){
     this-> startGame();
