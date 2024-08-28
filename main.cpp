@@ -2,7 +2,7 @@
 #include <string>
 using namespace std;
 
-class Pet {
+class Pet{
 private:
   string name;
   int hunger;
@@ -10,94 +10,98 @@ private:
   int health;
 
 public:
-  Pet(string petName) : name(petName), hunger(50), happiness(50), health(100) {}
-
-  void feed() {
-    hunger = max(0, hunger - 20);
-    health = min(100, health + 5);
-    cout << name << " has been fed!" << endl;
+  Pet(string name){
+    this-> name = name;
+    this-> hunger = 50;
+    this-> happiness = 50;
+    this-> health = 100;
   }
 
-  void play() {
-    happiness = min(100, happiness + 20);
-    hunger = min(100, hunger + 10);
-    health = max(0, health - 5);
-    cout << name << " enjoyed playing!" << endl;
+  Pet& feed(int hunger = 20){
+    this-> hunger = max(0, this->hunger - hunger);
+    this-> health = min(100, this-> health + 5);
+    cout << this-> name << " has been fed!" << endl;
+    return *this;
   }
 
-  void rest() {
-    health = min(100, health + 10);
-    hunger = min(100, hunger + 5);
-    cout << name << " is resting!" << endl;
+  Pet& play(int happiness = 20){ 
+    this-> happiness = min(100, this-> happiness + happiness);
+    this-> hunger = min(100, this-> hunger + 10);
+    this-> health = max(0, this-> health - 5 );
+    cout << this -> name << " enjoyed playing!" << endl;
+    return *this;
   }
 
-  void passTime() {
-    hunger = min(100, hunger + 5);
-    happiness = max(0, happiness - 5);
-    if (hunger > 80 || happiness < 20) {
-      health = max(0, health - 10);
+  Pet& rest(){
+    this-> health = min(100, this-> health + 10);
+    this-> hunger = min(100, this-> hunger + 5);
+    cout<< this-> name << " is resting!" << endl;
+    return *this;
+  }
+
+  void passTime(){
+    this-> hunger = min(100, this-> hunger + 5);
+    this-> happiness = max(0, this-> happiness - 5);
+    if(this-> hunger > 80 || this -> happiness < 20){
+      this-> health = max (0, this-> health - 10);
     }
   }
 
-  void displayStatus() const {
-    cout << "Current Status of " << name << ":\n"
-         << "Hunger: " << hunger << "\n"
-         << "Happiness: " << happiness << "\n"
-         << "Health: " << health << endl;
+  void displayStatus() const{
+    cout << "Current Status of " << this->name << ":\n"
+         << "Hunger: " << this-> hunger << "\n"
+         << "Happiness: " << this-> happiness << "\n"
+         << "health: " << this-> health << endl;
   }
 
-  bool isAlive() const { return health > 0; }
+  bool isAlive() const {return this-> health > 0;}
 
-  string getName() const { return name; }
+  string getName() const {return this-> name;}
+
 };
 
-class Game {
-private:
+class Game{
+  private:
   Pet pet;
 
-public:
-  Game(string petName) : pet(petName) {}
+  public:
+  Game(string petName) : pet(petName){}
 
-  void startGame() {
-    cout << "Welcome to HappyPaws! Let's take care of " << pet.getName() << "!"
-         << endl;
+  void startGame(){
+    cout<< "Welcome to HappyPaws! Let's take care of " << this-> pet.getName() << "!" << endl;
   }
 
-  void takeTurn() {
+  void takeTurn(){
     int choice;
-    cout << "\nWhat would you like to do?\n1. Feed\n2. Play\n3. Rest\nEnter "
-            "your choice: ";
+    cout << "\nWhat would you like to do?\n1. Feed\n2. Play\n3. Rest\nEnter" 
+    "your choice: ";
     cin >> choice;
 
-    switch (choice) {
-    case 1:
-      pet.feed();
+    switch(choice){
+      case 1: this->pet.feed();
       break;
-    case 2:
-      pet.play();
+      case 2: this->pet.play();
       break;
-    case 3:
-      pet.rest();
+      case 3: this->pet.rest();
       break;
-    default:
-      cout << "Invalid choice!" << endl;
+      default: cout << "Invalid choice!" << endl;
       break;
     }
 
-    pet.passTime(); // Simulate time passing after each action
+    this->pet.passTime();
   }
 
-  void playGame() {
-    startGame();
-    while (pet.isAlive()) {
-      pet.displayStatus();
-      takeTurn();
+  void playGame(){
+    this-> startGame();
+    while(this->pet.isAlive()){
+      this->pet.displayStatus();
+      this->takeTurn();
     }
-    cout << pet.getName() << " has passed away. Game over." << endl;
+    cout << this->pet.getName() << " has passed away. Game over." << endl;
   }
 };
 
-int main() {
+int main(){
   string petName;
   cout << "Enter the name of your pet: ";
   cin >> petName;
