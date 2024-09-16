@@ -9,6 +9,8 @@ private:
     int hunger;
     int happiness;
     int health;
+    static int totalPets;
+    static int alivePets;
 
 public:
     Pet(string name)
@@ -17,6 +19,14 @@ public:
         this->hunger = 50;
         this->happiness = 50;
         this->health = 100;
+        totalPets++;
+        alivePets++;
+    }
+
+    ~Pet()
+    {
+        if (isAlive())
+            alivePets--;
     }
 
     Pet &feed(int hunger = 20)
@@ -52,6 +62,8 @@ public:
         {
             this->health = max(0, this->health - 10);
         }
+        if (!isAlive())
+            alivePets--;
     }
 
     void displayStatus() const
@@ -65,7 +77,16 @@ public:
     bool isAlive() const { return this->health > 0; }
 
     string getName() const { return this->name; }
+
+    static void displayStats()
+    {
+        cout << "Total Pets created: " << totalPets << endl;
+        cout << "Alive Pets: " << alivePets << endl;
+    }
 };
+
+int Pet::totalPets = 0;
+int Pet::alivePets = 0;
 
 class Game
 {
@@ -122,14 +143,15 @@ int main()
     const int numPets = 3;
     Pet *pets[numPets];
 
-    // Dynamically allocate pets
     for (int i = 0; i < numPets; i++)
     {
         string petName;
         cout << "Enter the name of pet #" << (i + 1) << ": ";
         cin >> petName;
-        pets[i] = new Pet(petName); // Allocate memory dynamically
+        pets[i] = new Pet(petName);
     }
+
+    Pet::displayStats();
 
     for (int i = 0; i < numPets; i++)
     {
@@ -138,12 +160,13 @@ int main()
         game.playGame();
     }
 
-    // Clean up dynamically allocated pets
     for (int i = 0; i < numPets; i++)
     {
-        delete pets[i]; // Free memory
+        delete pets[i];
         pets[i] = nullptr;
     }
+
+    Pet::displayStats();
 
     return 0;
 }
