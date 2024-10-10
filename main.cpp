@@ -9,84 +9,88 @@ private:
     int hunger;
     int happiness;
     int health;
-    static int totalPets;
-    static int alivePets;
 
 public:
-    Pet(string name)
+    Pet(string petName)
     {
-        this->name = name;
-        this->hunger = 50;
-        this->happiness = 50;
-        this->health = 100;
-        totalPets++;
-        alivePets++;
+        setName(petName);
+        setHunger(50);
+        setHappiness(50);
+        setHealth(100);
     }
 
-    ~Pet()
+    string getName()
     {
-        if (isAlive())
-            alivePets--;
+        return name;
     }
 
-    Pet &feed(int hunger = 20)
+    void setName(string petName)
     {
-        this->hunger = max(0, this->hunger - hunger);
-        this->health = min(100, this->health + 5);
-        cout << this->name << " has been fed!" << endl;
-        return *this;
+        name = petName;
     }
 
-    Pet &play(int happiness = 20)
+    int getHunger()
     {
-        this->happiness = min(100, this->happiness + happiness);
-        this->hunger = min(100, this->hunger + 10);
-        this->health = max(0, this->health - 5);
-        cout << this->name << " enjoyed playing!" << endl;
-        return *this;
+        return hunger;
     }
 
-    Pet &rest()
+    void setHunger(int newHunger)
     {
-        this->health = min(100, this->health + 10);
-        this->hunger = min(100, this->hunger + 5);
-        cout << this->name << " is resting!" << endl;
-        return *this;
+        hunger = max(0, min(100, newHunger));
     }
 
-    void passTime()
+    int getHappiness()
     {
-        this->hunger = min(100, this->hunger + 5);
-        this->happiness = max(0, this->happiness - 5);
-        if (this->hunger >= 80 || this->happiness < 20)
-        {
-            this->health = max(0, this->health - 10);
-        }
-        if (!isAlive())
-            alivePets--;
+        return happiness;
     }
 
-    void displayStatus() const
+    void setHappiness(int newHappiness)
     {
-        cout << "Current Status of " << this->name << ":\n"
-             << "Hunger: " << this->hunger << "\n"
-             << "Happiness: " << this->happiness << "\n"
-             << "Health: " << this->health << endl;
+        happiness = max(0, min(100, newHappiness));
     }
 
-    bool isAlive() const { return this->health > 0; }
-
-    string getName() const { return this->name; }
-
-    static void displayStats()
+    int getHealth()
     {
-        cout << "Total Pets created: " << totalPets << endl;
-        cout << "Alive Pets: " << alivePets << endl;
+        return health;
+    }
+
+    void setHealth(int newHealth)
+    {
+        health = max(0, min(100, newHealth));
+    }
+
+    void feed()
+    {
+        setHunger(getHunger() - 10);
+        setHealth(getHealth() + 5);
+        cout << getName() << " has been fed. Hunger: " << getHunger() << ", Health: " << getHealth() << endl;
+    }
+
+    void play()
+    {
+        setHappiness(getHappiness() + 10);
+        setHunger(getHunger() + 5);
+        setHealth(getHealth() - 5);
+        cout << getName() << " played. Happiness: " << getHappiness() << ", Hunger: " << getHunger() << ", Health: " << getHealth() << endl;
+    }
+
+    void rest()
+    {
+        setHealth(getHealth() + 10);
+        setHunger(getHunger() + 5);
+        cout << getName() << " is resting. Health: " << getHealth() << ", Hunger: " << getHunger() << endl;
+    }
+
+    bool isAlive()
+    {
+        return getHealth() > 0;
+    }
+
+    void displayStatus()
+    {
+        cout << getName() << "'s Status - Hunger: " << getHunger() << ", Happiness: " << getHappiness() << ", Health: " << getHealth() << endl;
     }
 };
-
-int Pet::totalPets = 0;
-int Pet::alivePets = 0;
 
 class Game
 {
@@ -94,79 +98,71 @@ private:
     Pet *pet;
 
 public:
-    Game(Pet *pet) : pet(pet) {}
+    Game(Pet *p)
+    {
+        setPet(p);
+    }
+
+    Pet *getPet()
+    {
+        return pet;
+    }
+
+    void setPet(Pet *p)
+    {
+        pet = p;
+    }
 
     void startGame()
     {
-        cout << "Welcome to HappyPaws! Let's take care of " << this->pet->getName() << "!" << endl;
+        cout << "Welcome to the game! Let's take care of " << getPet()->getName() << "!" << endl;
     }
 
     void takeTurn()
     {
         int choice;
-        cout << "\nWhat would you like to do?\n1. Feed\n2. Play\n3. Rest\nEnter your choice: ";
+        cout << "\nWhat would you like to do?\n";
+        cout << "1. Feed\n2. Play\n3. Rest\nEnter your choice: ";
         cin >> choice;
 
         switch (choice)
         {
         case 1:
-            this->pet->feed();
+            getPet()->feed();
             break;
         case 2:
-            this->pet->play();
+            getPet()->play();
             break;
         case 3:
-            this->pet->rest();
+            getPet()->rest();
             break;
         default:
             cout << "Invalid choice!" << endl;
-            break;
         }
-
-        this->pet->passTime();
     }
 
     void playGame()
     {
-        this->startGame();
-        while (this->pet->isAlive())
+        startGame();
+        while (getPet()->isAlive())
         {
-            this->pet->displayStatus();
-            this->takeTurn();
+            getPet()->displayStatus();
+            takeTurn();
         }
-        cout << this->pet->getName() << " has passed away. Game over." << endl;
+        cout << getPet()->getName() << " has passed away. Game over." << endl;
     }
 };
 
 int main()
 {
-    const int numPets = 3;
-    Pet *pets[numPets];
+    string petName;
+    cout << "Enter the name of your pet: ";
+    cin >> petName;
 
-    for (int i = 0; i < numPets; i++)
-    {
-        string petName;
-        cout << "Enter the name of pet #" << (i + 1) << ": ";
-        cin >> petName;
-        pets[i] = new Pet(petName);
-    }
+    Pet pet(petName);
+    Game game(&pet);
 
-    Pet::displayStats();
-
-    for (int i = 0; i < numPets; i++)
-    {
-        cout << "Interacting with " << pets[i]->getName() << "!" << endl;
-        Game game(pets[i]);
-        game.playGame();
-    }
-
-    for (int i = 0; i < numPets; i++)
-    {
-        delete pets[i];
-        pets[i] = nullptr;
-    }
-
-    Pet::displayStats();
+    game.playGame();
 
     return 0;
 }
