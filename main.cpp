@@ -11,6 +11,15 @@ private:
     int health;
 
 public:
+    Pet()
+    {
+        setName("Unnamed Pet");
+        setHunger(50);
+        setHappiness(50);
+        setHealth(100);
+        cout << "A pet with no name was created!" << endl;
+    }
+
     Pet(string petName)
     {
         setName(petName);
@@ -155,15 +164,19 @@ public:
 
 int main()
 {
-    // Creating a pet
     string petName;
     cout << "Enter the name of your pet: ";
     cin >> petName;
 
-    Pet pet(petName);
-    Game game(&pet);
+    Pet pet1(petName);
+    Game game1(&pet1);
 
-    game.playGame();
+    game1.playGame();
+
+    Pet pet2;
+    Game game2(&pet2);
+
+    game2.playGame();
 
     return 0;
 }
