@@ -155,6 +155,7 @@ public:
 
 int main()
 {
+    // Creating a pet
     string petName;
     cout << "Enter the name of your pet: ";
     cin >> petName;
