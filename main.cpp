@@ -4,7 +4,7 @@ using namespace std;
 
 class Pet
 {
-private:
+protected:
     string name;
     int hunger;
     int happiness;
@@ -68,14 +68,14 @@ public:
         health = max(0, min(100, newHealth));
     }
 
-    void feed()
+    virtual void feed()
     {
         setHunger(getHunger() - 10);
         setHealth(getHealth() + 5);
         cout << getName() << " has been fed. Hunger: " << getHunger() << ", Health: " << getHealth() << endl;
     }
 
-    void play()
+    virtual void play()
     {
         setHappiness(getHappiness() + 10);
         setHunger(getHunger() + 5);
@@ -83,7 +83,7 @@ public:
         cout << getName() << " played. Happiness: " << getHappiness() << ", Hunger: " << getHunger() << ", Health: " << getHealth() << endl;
     }
 
-    void rest()
+    virtual void rest()
     {
         setHealth(getHealth() + 10);
         setHunger(getHunger() + 5);
@@ -95,9 +95,46 @@ public:
         return getHealth() > 0;
     }
 
-    void displayStatus()
+    virtual void displayStatus()
     {
         cout << getName() << "'s Status - Hunger: " << getHunger() << ", Happiness: " << getHappiness() << ", Health: " << getHealth() << endl;
+    }
+};
+
+class Dog : public Pet
+{
+public:
+    Dog(string petName) : Pet(petName) {}
+
+    void play() override
+    {
+        setHappiness(getHappiness() + 15);
+        setHunger(getHunger() + 5);
+        setHealth(getHealth() - 7);
+        cout << getName() << " (the Dog) played enthusiastically. Happiness: " << getHappiness() << ", Hunger: " << getHunger() << ", Health: " << getHealth() << endl;
+    }
+
+    void displayStatus() override
+    {
+        cout << getName() << " (the Dog) - Hunger: " << getHunger() << ", Happiness: " << getHappiness() << ", Health: " << getHealth() << endl;
+    }
+};
+
+class Cat : public Pet
+{
+public:
+    Cat(string petName) : Pet(petName) {}
+
+    void rest() override
+    {
+        setHealth(getHealth() + 15);
+        setHunger(getHunger() + 3);
+        cout << getName() << " (the Cat) is napping. Health: " << getHealth() << ", Hunger: " << getHunger() << endl;
+    }
+
+    void displayStatus() override
+    {
+        cout << getName() << " (the Cat) - Hunger: " << getHunger() << ", Happiness: " << getHappiness() << ", Health: " << getHealth() << endl;
     }
 };
 
@@ -165,18 +202,27 @@ public:
 int main()
 {
     string petName;
+    int petType;
+    cout << "Choose your pet type:\n1. Dog\n2. Cat\nEnter choice: ";
+    cin >> petType;
+
     cout << "Enter the name of your pet: ";
     cin >> petName;
 
-    Pet pet1(petName);
-    Game game1(&pet1);
+    Pet *pet;
+    if (petType == 1)
+        pet = new Dog(petName);
+    else if (petType == 2)
+        pet = new Cat(petName);
+    else
+    {
+        cout << "Invalid pet type. Creating a default pet." << endl;
+        pet = new Pet(petName);
+    }
 
-    game1.playGame();
+    Game game(pet);
+    game.playGame();
 
-    Pet pet2;
-    Game game2(&pet2);
-
-    game2.playGame();
-
+    delete pet;
     return 0;
 }
