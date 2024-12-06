@@ -2,7 +2,15 @@
 #include <string>
 using namespace std;
 
-class Pet
+class AbstractPet
+{
+public:
+    virtual void speak() = 0;
+    virtual void displayStatus() = 0;
+    virtual ~AbstractPet() {}
+};
+
+class Pet : public AbstractPet
 {
 protected:
     string name;
@@ -95,9 +103,15 @@ public:
         return getHealth() > 0;
     }
 
-    virtual void displayStatus()
+    virtual void displayStatus() override
     {
         cout << getName() << "'s Status - Hunger: " << getHunger() << ", Happiness: " << getHappiness() << ", Health: " << getHealth() << endl;
+    }
+
+    // Pure virtual function implemented in derived classes
+    virtual void speak() override
+    {
+        cout << getName() << " makes a sound!" << endl;
     }
 };
 
@@ -118,6 +132,11 @@ public:
     {
         cout << getName() << " (the Dog) - Hunger: " << getHunger() << ", Happiness: " << getHappiness() << ", Health: " << getHealth() << endl;
     }
+
+    void speak() override
+    {
+        cout << getName() << " (the Dog) says: Woof Woof!" << endl;
+    }
 };
 
 class Cat : public Pet
@@ -136,51 +155,59 @@ public:
     {
         cout << getName() << " (the Cat) - Hunger: " << getHunger() << ", Happiness: " << getHappiness() << ", Health: " << getHealth() << endl;
     }
+
+    void speak() override
+    {
+        cout << getName() << " (the Cat) says: Meow!" << endl;
+    }
 };
 
 class Game
 {
 private:
-    Pet *pet;
+    AbstractPet *pet;
 
 public:
-    Game(Pet *p)
+    Game(AbstractPet *p)
     {
         setPet(p);
     }
 
-    Pet *getPet()
+    AbstractPet *getPet()
     {
         return pet;
     }
 
-    void setPet(Pet *p)
+    void setPet(AbstractPet *p)
     {
         pet = p;
     }
 
     void startGame()
     {
-        cout << "Welcome to the gamee! Let's take care of " << getPet()->getName() << "!" << endl;
+        cout << "Welcome to the game! Let's take care of " << dynamic_cast<Pet *>(pet)->getName() << "!" << endl;
     }
 
     void takeTurn()
     {
         int choice;
         cout << "\nWhat would you like to do?\n";
-        cout << "1. Feed\n2. Play\n3. Rest\nEnter your choice: ";
+        cout << "1. Feed\n2. Play\n3. Rest\n4. Speak\nEnter your choice: ";
         cin >> choice;
 
         switch (choice)
         {
         case 1:
-            getPet()->feed();
+            dynamic_cast<Pet *>(pet)->feed();
             break;
         case 2:
-            getPet()->play();
+            dynamic_cast<Pet *>(pet)->play();
             break;
         case 3:
-            getPet()->rest();
+            dynamic_cast<Pet *>(pet)->rest();
+            break;
+        case 4:
+            pet->speak();
             break;
         default:
             cout << "Invalid choice!" << endl;
@@ -190,12 +217,12 @@ public:
     void playGame()
     {
         startGame();
-        while (getPet()->isAlive())
+        while (dynamic_cast<Pet *>(pet)->isAlive())
         {
-            getPet()->displayStatus();
+            pet->displayStatus();
             takeTurn();
         }
-        cout << getPet()->getName() << " has passed away. Game over." << endl;
+        cout << dynamic_cast<Pet *>(pet)->getName() << " has passed away. Game over." << endl;
     }
 };
 
@@ -209,7 +236,7 @@ int main()
     cout << "Enter the name of your pet: ";
     cin >> petName;
 
-    Pet *pet;
+    AbstractPet *pet;
     if (petType == 1)
         pet = new Dog(petName);
     else if (petType == 2)
