@@ -2,185 +2,113 @@
 #include <string>
 using namespace std;
 
-class Pet
+class AbstractPet
 {
 protected:
     string name;
-    int hunger;
-    int happiness;
-    int health;
+    int hunger = 50;
+    int happiness = 50;
+    int health = 100;
 
 public:
-    Pet()
+    AbstractPet(string petName) : name(petName) {}
+    virtual ~AbstractPet() {}
+
+    virtual void speak() const = 0;
+    virtual void play() = 0;
+
+    void feed()
     {
-        setName("Unnamed Pet");
-        setHunger(50);
-        setHappiness(50);
-        setHealth(100);
-        cout << "A pet with no name was created!" << endl;
+        hunger = max(0, hunger - 10);
+        health = min(100, health + 5);
+        cout << name << " has been fed. Hunger: " << hunger << ", Health: " << health << endl;
     }
 
-    Pet(string petName)
+    void rest()
     {
-        setName(petName);
-        setHunger(50);
-        setHappiness(50);
-        setHealth(100);
+        health = min(100, health + 10);
+        hunger = min(100, hunger + 5);
+        cout << name << " is resting. Health: " << health << ", Hunger: " << hunger << endl;
     }
 
-    string getName()
+    void displayStatus() const
     {
-        return name;
+        cout << name << " - Hunger: " << hunger << ", Happiness: " << happiness << ", Health: " << health << endl;
     }
 
-    void setName(string petName)
-    {
-        name = petName;
-    }
-
-    int getHunger()
-    {
-        return hunger;
-    }
-
-    void setHunger(int newHunger)
-    {
-        hunger = max(0, min(100, newHunger));
-    }
-
-    int getHappiness()
-    {
-        return happiness;
-    }
-
-    void setHappiness(int newHappiness)
-    {
-        happiness = max(0, min(100, newHappiness));
-    }
-
-    int getHealth()
-    {
-        return health;
-    }
-
-    void setHealth(int newHealth)
-    {
-        health = max(0, min(100, newHealth));
-    }
-
-    virtual void feed()
-    {
-        setHunger(getHunger() - 10);
-        setHealth(getHealth() + 5);
-        cout << getName() << " has been fed. Hunger: " << getHunger() << ", Health: " << getHealth() << endl;
-    }
-
-    virtual void play()
-    {
-        setHappiness(getHappiness() + 10);
-        setHunger(getHunger() + 5);
-        setHealth(getHealth() - 5);
-        cout << getName() << " played. Happiness: " << getHappiness() << ", Hunger: " << getHunger() << ", Health: " << getHealth() << endl;
-    }
-
-    virtual void rest()
-    {
-        setHealth(getHealth() + 10);
-        setHunger(getHunger() + 5);
-        cout << getName() << " is resting. Health: " << getHealth() << ", Hunger: " << getHunger() << endl;
-    }
-
-    bool isAlive()
-    {
-        return getHealth() > 0;
-    }
-
-    virtual void displayStatus()
-    {
-        cout << getName() << "'s Status - Hunger: " << getHunger() << ", Happiness: " << getHappiness() << ", Health: " << getHealth() << endl;
-    }
+    bool isAlive() const { return health > 0; }
 };
 
-class Dog : public Pet
+class Dog : public AbstractPet
 {
 public:
-    Dog(string petName) : Pet(petName) {}
+    Dog(string petName) : AbstractPet(petName) {}
+
+    void speak() const override { cout << name << " says: Woof Woof!" << endl; }
 
     void play() override
     {
-        setHappiness(getHappiness() + 15);
-        setHunger(getHunger() + 5);
-        setHealth(getHealth() - 7);
-        cout << getName() << " (the Dog) played enthusiastically. Happiness: " << getHappiness() << ", Hunger: " << getHunger() << ", Health: " << getHealth() << endl;
-    }
-
-    void displayStatus() override
-    {
-        cout << getName() << " (the Dog) - Hunger: " << getHunger() << ", Happiness: " << getHappiness() << ", Health: " << getHealth() << endl;
+        happiness = min(100, happiness + 15);
+        hunger = min(100, hunger + 5);
+        health = max(0, health - 7);
+        cout << name << " (Dog) played enthusiastically. Happiness: " << happiness << ", Hunger: " << hunger << ", Health: " << health << endl;
     }
 };
 
-class Cat : public Pet
+class Cat : public AbstractPet
 {
 public:
-    Cat(string petName) : Pet(petName) {}
+    Cat(string petName) : AbstractPet(petName) {}
 
-    void rest() override
-    {
-        setHealth(getHealth() + 15);
-        setHunger(getHunger() + 3);
-        cout << getName() << " (the Cat) is napping. Health: " << getHealth() << ", Hunger: " << getHunger() << endl;
-    }
+    void speak() const override { cout << name << " says: Meow!" << endl; }
 
-    void displayStatus() override
+    void play() override
     {
-        cout << getName() << " (the Cat) - Hunger: " << getHunger() << ", Happiness: " << getHappiness() << ", Health: " << getHealth() << endl;
+        happiness = min(100, happiness + 10);
+        hunger = min(100, hunger + 5);
+        health = max(0, health - 5);
+        cout << name << " (Cat) played calmly. Happiness: " << happiness << ", Hunger: " << hunger << ", Health: " << health << endl;
     }
 };
 
 class Game
 {
 private:
-    Pet *pet;
+    AbstractPet *pet;
 
 public:
-    Game(Pet *p)
-    {
-        setPet(p);
-    }
+    Game(AbstractPet *p) : pet(p) {}
 
-    Pet *getPet()
+    ~Game()
     {
-        return pet;
-    }
-
-    void setPet(Pet *p)
-    {
-        pet = p;
+        delete pet;
     }
 
     void startGame()
     {
-        cout << "Welcome to the gamee! Let's take care of " << getPet()->getName() << "!" << endl;
+        cout << "Welcome! Let's take care of " << pet->displayStatus() << "!" << endl;
     }
 
     void takeTurn()
     {
         int choice;
         cout << "\nWhat would you like to do?\n";
-        cout << "1. Feed\n2. Play\n3. Rest\nEnter your choice: ";
+        cout << "1. Feed\n2. Play\n3. Rest\n4. Speak\nEnter your choice: ";
         cin >> choice;
 
         switch (choice)
         {
         case 1:
-            getPet()->feed();
+            pet->feed();
             break;
         case 2:
-            getPet()->play();
+            pet->play();
             break;
         case 3:
-            getPet()->rest();
+            pet->rest();
+            break;
+        case 4:
+            pet->speak();
             break;
         default:
             cout << "Invalid choice!" << endl;
@@ -190,12 +118,12 @@ public:
     void playGame()
     {
         startGame();
-        while (getPet()->isAlive())
+        while (pet->isAlive())
         {
-            getPet()->displayStatus();
+            pet->displayStatus();
             takeTurn();
         }
-        cout << getPet()->getName() << " has passed away. Game over." << endl;
+        cout << "Game over. Your pet has passed away." << endl;
     }
 };
 
@@ -203,26 +131,31 @@ int main()
 {
     string petName;
     int petType;
+
     cout << "Choose your pet type:\n1. Dog\n2. Cat\nEnter choice: ";
     cin >> petType;
 
     cout << "Enter the name of your pet: ";
     cin >> petName;
 
-    Pet *pet;
+    AbstractPet *pet = nullptr;
+
     if (petType == 1)
+    {
         pet = new Dog(petName);
+    }
     else if (petType == 2)
+    {
         pet = new Cat(petName);
+    }
     else
     {
-        cout << "Invalid pet type. Creating a default pet." << endl;
-        pet = new Pet(petName);
+        cout << "Invalid choice. Defaulting to a Dog." << endl;
+        pet = new Dog(petName);
     }
 
     Game game(pet);
     game.playGame();
 
-    delete pet;
     return 0;
 }
