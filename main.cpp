@@ -161,7 +161,7 @@ public:
 
     void startGame()
     {
-        cout << "Welcome to the game! Let's take care of " << getPet()->getName() << "!" << endl;
+        cout << "Welcome to the gamee! Let's take care of " << getPet()->getName() << "!" << endl;
     }
 
     void takeTurn()
